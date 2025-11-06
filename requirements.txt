@@ -1,0 +1,13 @@
+# For LLM Orchestration and API access
+langchain
+openai
+
+# For Observability and Tracing
+langfuse
+
+# For environment variables
+python-dotenv
+
+# Add the Ollama package and core dependency
+langchain-ollama
+langchain-core

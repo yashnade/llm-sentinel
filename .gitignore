@@ -1,0 +1,38 @@
+
+---
+
+## 🧱 **.gitignore File**
+
+
+
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environments
+myenv/
+venv/
+.env/
+.envrc
+*.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs & caches
+*.log
+*.csv
+*.db-journal
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit cache
+.streamlit/
+
