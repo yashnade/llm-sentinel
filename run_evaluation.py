@@ -10,9 +10,9 @@ from langfuse import get_client, observe
 from evaluation.metrics import evaluate_hallucination_and_relevance
 from evaluation.db import init_db, save_evaluation
 
-# ------------------------------------------------------------
-# 1️⃣ Load environment variables and initialize Langfuse client
-# ------------------------------------------------------------
+
+# Load environment variables and initialize Langfuse client
+
 load_dotenv()
 lf = get_client()
 
@@ -23,9 +23,9 @@ os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = os.getenv("OTEL_EXPORTER_OTLP_TIMEOUT
 init_db()
 
 
-# ------------------------------------------------------------
-# 2️⃣ Helper: Send scores + metadata to Langfuse (modern Basic Auth)
-# ------------------------------------------------------------
+
+#  Helper: Send scores + metadata to Langfuse (modern Basic Auth)
+
 def send_scores(trace_id: str, scores: list, model_name: str = None, sample_id: str = None):
     """Attach metadata to Langfuse trace (skip /scores endpoint)."""
     try:
@@ -71,9 +71,9 @@ def send_scores(trace_id: str, scores: list, model_name: str = None, sample_id: 
     except Exception as e:
         print(f"⚠️ Failed to send metadata to Langfuse: {e}")
 
-# ------------------------------------------------------------
-# 3️⃣ Observed function for LLM execution and evaluation
-# ------------------------------------------------------------
+
+#  Observed function for LLM execution and evaluation
+
 @observe(name="LLMSentinel-TestRun")
 def execute_and_observe_llm(
     query: str,
@@ -91,9 +91,9 @@ def execute_and_observe_llm(
     """
     start_time = time.time()
 
-    # --------------------------------------------------------
+  
     # Select mode
-    # --------------------------------------------------------
+   
     if mode == "ollama":
         TARGET_MODEL = ChatOllama(
             model=os.getenv("TARGET_MODEL_NAME", "llama3"),
@@ -126,9 +126,9 @@ def execute_and_observe_llm(
     else:
         raise ValueError("Invalid mode. Use 'ollama', 'manual', or 'api'.")
 
-    # --------------------------------------------------------
+  
     # Measure latency
-    # --------------------------------------------------------
+   
     latency = time.time() - start_time
     print(f"\n✅ Model Output (first 200 chars): {model_output[:200]}...")
     print(f"⏱️ Latency: {latency:.2f}s")
@@ -137,9 +137,9 @@ def execute_and_observe_llm(
     trace_id = lf.get_current_trace_id() or f"trace-{mode}-{int(time.time())}"
     print(f"🧭 Trace ID: {trace_id}")
 
-    # --------------------------------------------------------
+   
     # Evaluate using Judge (metrics.py)
-    # --------------------------------------------------------
+  
     print("\n🔍 Running LLM-as-a-Judge evaluation (metrics.py)...")
     eval_scores = evaluate_hallucination_and_relevance(query, model_output, context)
 
@@ -150,14 +150,14 @@ def execute_and_observe_llm(
         {"name": "relevance", "value": float(eval_scores.get("relevance_score", 0))},
     ]
 
-    # --------------------------------------------------------
+  
     # Send to Langfuse
-    # --------------------------------------------------------
+   
     send_scores(trace_id, scores, model_name=model_name, sample_id=sample_id)
 
-    # --------------------------------------------------------
+    
     # Save locally to DB
-    # --------------------------------------------------------
+  
     record = {
         "trace_id": trace_id,
         "model_name": model_name,
@@ -176,9 +176,9 @@ def execute_and_observe_llm(
     except Exception as e:
         print(f"⚠️ Failed to save evaluation to DB: {e}")
 
-    # --------------------------------------------------------
+  
     # Print trace link for Langfuse
-    # --------------------------------------------------------
+   
     project_name = os.getenv("LANGCHAIN_PROJECT", "default")
     trace_url = f"{os.getenv('LANGFUSE_HOST')}/project/{project_name}/traces/{trace_id}"
     print(f"🔗 View Trace in Langfuse: {trace_url}")
@@ -192,9 +192,9 @@ def execute_and_observe_llm(
     }
 
 
-# ------------------------------------------------------------
-# 4️⃣ Entry point (CLI)
-# ------------------------------------------------------------
+
+# 4️ Entry point (CLI)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate Ollama or custom model using LLM-as-a-Judge.")
     parser.add_argument("--mode", type=str, default="ollama", choices=["ollama", "manual", "api"],
