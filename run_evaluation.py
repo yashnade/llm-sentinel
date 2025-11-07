@@ -33,7 +33,7 @@ def send_scores(trace_id: str, scores: list, model_name: str = None, sample_id: 
         public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
         secret_key = os.getenv("LANGFUSE_SECRET_KEY")
         if not all([base_url, public_key, secret_key]):
-            print("⚠️ Missing Langfuse environment vars.")
+            print("Missing Langfuse environment vars.")
             return
 
         # Build Basic Auth header
@@ -43,7 +43,7 @@ def send_scores(trace_id: str, scores: list, model_name: str = None, sample_id: 
             "Authorization": f"Basic {token}"
         }
 
-        # --- Attach metadata (only) ---
+        # Attach metadata (only) 
         metadata_payload = {
             "traceId": trace_id,
             "metadata": {
@@ -66,10 +66,10 @@ def send_scores(trace_id: str, scores: list, model_name: str = None, sample_id: 
         if resp_meta.status_code == 200:
             print(" Metadata successfully attached to trace .")
         else:
-            print(f"⚠️ Langfuse (metadata) responded with {resp_meta.status_code}: {resp_meta.text}")
+            print(f" Langfuse (metadata) responded with {resp_meta.status_code}: {resp_meta.text}")
 
     except Exception as e:
-        print(f"⚠️ Failed to send metadata to Langfuse: {e}")
+        print(f"Failed to send metadata to Langfuse: {e}")
 
 
 #  Observed function for LLM execution and evaluation
@@ -116,11 +116,11 @@ def execute_and_observe_llm(
             body = resp.json()
             model_output = body.get("output") or body.get("result") or str(body)
         except Exception as e:
-            print(f"⚠️ API call failed: {e}")
+            print(f" API call failed: {e}")
             model_output = ""
 
     elif mode == "manual":
-        print("\n🧠 Manual Evaluation Mode Active — paste your custom model output below:\n")
+        print("\n Manual Evaluation Mode Active — paste your custom model output below:\n")
         model_output = input("Paste model output (end with Enter):\n\n")
 
     else:
@@ -130,17 +130,17 @@ def execute_and_observe_llm(
     # Measure latency
    
     latency = time.time() - start_time
-    print(f"\n✅ Model Output (first 200 chars): {model_output[:200]}...")
-    print(f"⏱️ Latency: {latency:.2f}s")
+    print(f"\n Model Output (first 200 chars): {model_output[:200]}...")
+    print(f" Latency: {latency:.2f}s")
 
     # Retrieve or create trace ID
     trace_id = lf.get_current_trace_id() or f"trace-{mode}-{int(time.time())}"
-    print(f"🧭 Trace ID: {trace_id}")
+    print(f" Trace ID: {trace_id}")
 
    
     # Evaluate using Judge (metrics.py)
   
-    print("\n🔍 Running LLM-as-a-Judge evaluation (metrics.py)...")
+    print("\n Running LLM-as-a-Judge evaluation (metrics.py)...")
     eval_scores = evaluate_hallucination_and_relevance(query, model_output, context)
 
     # Prepare validated numeric scores
@@ -172,16 +172,16 @@ def execute_and_observe_llm(
 
     try:
         save_evaluation(record)
-        print("💾 Saved evaluation to local DB.")
+        print("Saved evaluation to local DB.")
     except Exception as e:
-        print(f"⚠️ Failed to save evaluation to DB: {e}")
+        print(f"Failed to save evaluation to DB: {e}")
 
   
     # Print trace link for Langfuse
    
     project_name = os.getenv("LANGCHAIN_PROJECT", "default")
     trace_url = f"{os.getenv('LANGFUSE_HOST')}/project/{project_name}/traces/{trace_id}"
-    print(f"🔗 View Trace in Langfuse: {trace_url}")
+    print(f" View Trace in Langfuse: {trace_url}")
 
     return {
         "model_output": model_output,
@@ -193,7 +193,7 @@ def execute_and_observe_llm(
 
 
 
-# 4️ Entry point (CLI)
+#  Entry point (CLI)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate Ollama or custom model using LLM-as-a-Judge.")

@@ -1,4 +1,4 @@
-# dashboard/app.py
+
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -118,9 +118,9 @@ def load_data():
     return df
 
 
-# ==============================================================
-# ⚙️ Page Configuration
-# ==============================================================
+
+# Page Configuration
+
 st.set_page_config(
     layout="wide",
     page_title="Model Evaluation Dashboard",
@@ -140,9 +140,9 @@ if df.empty:
     st.error("⚠️ No evaluation data found. Please run evaluations first.")
     st.stop()
 
-# ==============================================================
-# 🎛️ Sidebar Filters
-# ==============================================================
+
+# Sidebar Filters
+
 st.sidebar.header("🎛️ Filters")
 st.sidebar.markdown("---")
 
@@ -168,9 +168,9 @@ st.sidebar.info("💡 **Tip:** Use filters to focus on specific models or sample
 # Filter data
 filtered = df[df["model_name"].isin(model_sel) & df["sample_id"].isin(sample_sel)]
 
-# ==============================================================
-# 📈 Key Metrics Summary
-# ==============================================================
+
+#  Key Metrics Summary
+
 if not filtered.empty:
     st.markdown("### 📈 Key Metrics Overview")
     
@@ -210,9 +210,9 @@ if not filtered.empty:
     
     st.markdown("---")
 
-# ==============================================================
-# 📊 Average Scores by Model
-# ==============================================================
+
+# Average Scores by Model
+
 st.markdown("### 📊 Average Scores by Model")
 
 if not filtered.empty:
@@ -257,10 +257,10 @@ else:
 
 st.markdown("---")
 
-# ==============================================================
-# 📈 Model Score Trends
-# ==============================================================
-st.markdown("### 📈 Model Score Trends Over Time")
+
+# Model Score Trends
+
+st.markdown("###  Model Score Trends Over Time")
 
 col1, col2 = st.columns([2, 1])
 with col1:
@@ -298,9 +298,9 @@ else:
 
 st.markdown("---")
 
-# ==============================================================
-# ⚡ Latency Trend
-# ==============================================================
+
+# Latency Trend
+
 st.markdown("### ⚡ Latency Trend Analysis")
 
 latency_df = df[df["model_name"] == model_for_trend].sort_values("created_at")
@@ -347,10 +347,10 @@ else:
 
 st.markdown("---")
 
-# ==============================================================
-# 📋 Detailed Evaluation Data
-# ==============================================================
-st.markdown("### 📋 Detailed Evaluation Data")
+
+# Detailed Evaluation Data
+
+st.markdown("###  Detailed Evaluation Data")
 
 # Add search/filter options
 col1, col2, col3 = st.columns([2, 1, 1])
@@ -383,9 +383,9 @@ st.dataframe(
 
 st.caption(f"Showing {len(display_df)} of {len(filtered)} evaluations")
 
-# ==============================================================
+
 # Footer
-# ==============================================================
+
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #6b7280; padding: 2rem 0;'>
